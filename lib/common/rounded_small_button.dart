@@ -20,8 +20,11 @@ class RoundedSmallButton extends StatelessWidget {
       onTap: onTap,
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-        decoration: BoxDecoration(borderRadius: BorderRadius.circular(40)),
-        color: buttonColor,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(40),
+          color: buttonColor,
+        ),
+
         child: Text(buttonText, style: TextStyle(color: textColor)),
       ),
     );
