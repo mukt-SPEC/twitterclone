@@ -5,4 +5,5 @@ class AppwriteEnvironment {
       'https://fra.cloud.appwrite.io/v1';
 
   static const String databaseId = '69455e8700393822a252';
+  static const String tableId = 'user_table';
 }

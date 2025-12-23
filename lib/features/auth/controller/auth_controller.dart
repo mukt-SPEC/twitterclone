@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:twitterclone/apis/auth_api.dart';
+import 'package:twitterclone/apis/user_api.dart';
 
 import 'package:twitterclone/core/result.dart';
 import 'package:twitterclone/core/utils.dart';
@@ -11,7 +12,9 @@ import 'package:twitterclone/features/home/view/home_view.dart';
 
 final authControllerProvider =
     StateNotifierProvider.autoDispose<AuthController, bool>((ref) {
-      return AuthController(authApi: ref.watch(authAPIProvider));
+      final authProvider = ref.watch(authAPIProvider);
+      final userDbprovider = ref.watch(userAPIProvider);
+      return AuthController(authApi: authProvider, userApi: userDbprovider);
     });
 
 final currentUserProvider = FutureProvider<User?>((ref) {
@@ -21,7 +24,11 @@ final currentUserProvider = FutureProvider<User?>((ref) {
 
 class AuthController extends StateNotifier<bool> {
   final AuthApi _authApi;
-  AuthController({required AuthApi authApi}) : _authApi = authApi, super(false);
+  final UserAPI _userAPI;
+  AuthController({required AuthApi authApi, required UserAPI userApi})
+    : _authApi = authApi,
+      _userAPI = userApi,
+      super(false);
 
   void signUp({
     required String email,
