@@ -9,6 +9,7 @@ import 'package:twitterclone/core/result.dart';
 import 'package:twitterclone/core/utils.dart';
 import 'package:twitterclone/features/auth/view/login_view.dart';
 import 'package:twitterclone/features/home/view/home_view.dart';
+import 'package:twitterclone/model/user_model.dart';
 
 final authControllerProvider =
     StateNotifierProvider.autoDispose<AuthController, bool>((ref) {
@@ -41,6 +42,26 @@ class AuthController extends StateNotifier<bool> {
 
     switch (response) {
       case Success(data: final user):
+        UserModel userModel = UserModel(
+          name: getNameFromEmail(email: email),
+          email: email,
+          followers: [],
+          following: [],
+          profilePicture: '',
+          bannerPicture: '',
+          uId: '',
+          bioDescription: '',
+          isVerified: false,
+        );
+        final result = await _userAPI.saveUserData(userModel);
+        switch (result) {
+          case Success():
+            Navigator.push(context, LoginView.route());
+            showSnackBar(context, 'Account Created!, Please login');
+          case Error(failure: final failure):
+            showSnackBar(context, failure.message!);
+        }
+
         Navigator.push(context, LoginView.route());
         showSnackBar(context, 'Account Created!, Please login');
       case Error(failure: final failure):
