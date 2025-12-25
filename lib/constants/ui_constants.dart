@@ -13,4 +13,6 @@ class UiConstants {
       ),
     );
   }
+
+  static List<Widget> bottomTabBarPages = [];
 }

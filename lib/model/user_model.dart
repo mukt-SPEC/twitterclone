@@ -106,7 +106,7 @@ class UserModel {
 
       profilePicture: map['profilePicture'] as String? ?? '',
       bannerPicture: map['bannerPicture'] as String? ?? '',
-      uId: map['uId'] as String? ?? '',
+      uId: map['\$id'] as String? ?? '',
       bioDescription: map['bioDescription'] as String? ?? '',
       isVerified: map['isVerified'] as bool? ?? false,
     );

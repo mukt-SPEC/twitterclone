@@ -1,4 +1,5 @@
 import 'package:appwrite/appwrite.dart';
+import 'package:appwrite/models.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:twitterclone/constants/constants.dart';
 import 'package:twitterclone/core/core.dart';
@@ -8,11 +9,12 @@ import 'package:twitterclone/model/user_model.dart';
 
 abstract class InterfaceUserAPI {
   FutureEitherVoid saveUserData(UserModel user);
+  Future<Row> getUserData(String uId);
 }
 
 final userAPIProvider = Provider<UserAPI>((ref) {
   final tableDB = ref.watch(Dependency.tablesDb);
-  return UserAPI(db: tableDB) ;
+  return UserAPI(db: tableDB);
 });
 
 class UserAPI extends InterfaceUserAPI {
@@ -37,5 +39,14 @@ class UserAPI extends InterfaceUserAPI {
     } catch (e, stackTrace) {
       return Error(Failure(e.toString(), stackTrace));
     }
+  }
+
+  @override
+  Future<Row> getUserData(String uId) {
+    return _db.getRow(
+      databaseId: AppwriteEnvironment.databaseId,
+      tableId: AppwriteEnvironment.tableId,
+      rowId: uId,
+    );
   }
 }

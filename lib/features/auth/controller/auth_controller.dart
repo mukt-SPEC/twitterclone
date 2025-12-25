@@ -17,6 +17,15 @@ final authControllerProvider =
       final userDbprovider = ref.watch(userAPIProvider);
       return AuthController(authApi: authProvider, userApi: userDbprovider);
     });
+final currentUserDetailsProvider = FutureProvider((ref) {
+  final currentUserId = ref.watch(currentUserProvider).value!.$id;
+  final userDetails = ref.watch(userDetailsProvider(currentUserId));
+  return userDetails.value;
+});
+final userDetailsProvider = FutureProvider.family((ref, String uId) {
+  final authController = ref.watch(authControllerProvider.notifier);
+  return authController.getUserData(uId);
+});
 
 final currentUserProvider = FutureProvider<User?>((ref) {
   final authController = ref.watch(authControllerProvider.notifier);
@@ -89,5 +98,11 @@ class AuthController extends StateNotifier<bool> {
       case Error(failure: final failure):
         showSnackBar(context, failure.message!);
     }
+  }
+
+  Future<UserModel> getUserData(String uId) async {
+    final row = await _userAPI.getUserData(uId);
+    final updatedUser = UserModel.fromMap(row.data);
+    return updatedUser;
   }
 }
