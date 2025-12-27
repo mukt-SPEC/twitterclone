@@ -7,8 +7,8 @@ class UserModel {
   final String email;
   final List<String> followers;
   final List<String> following;
-  final String profilePicture;
-  final String bannerPicture;
+  final String? profilePicture;
+  final String? bannerPicture;
   final String uId;
   final String bioDescription;
   final bool isVerified;

@@ -27,7 +27,7 @@ class UserAPI extends InterfaceUserAPI {
       await _db.createRow(
         databaseId: AppwriteEnvironment.databaseId,
         tableId: AppwriteEnvironment.tableId,
-        rowId: ID.unique(),
+        rowId: user.uId,
         data: user.toMap(),
       );
 

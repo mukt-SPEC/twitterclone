@@ -58,7 +58,7 @@ class AuthController extends StateNotifier<bool> {
           following: [],
           profilePicture: '',
           bannerPicture: '',
-          uId: '',
+          uId: user.$id,
           bioDescription: '',
           isVerified: false,
         );

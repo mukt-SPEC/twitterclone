@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:twitterclone/Theme/theme.dart';
 import 'package:twitterclone/apis/user_api.dart';
 import 'package:twitterclone/common/rounded_small_button.dart';
+import 'package:twitterclone/constants/assets_constaant.dart';
 import 'package:twitterclone/features/auth/controller/auth_controller.dart';
 
 class CreateTweetView extends ConsumerStatefulWidget {
@@ -16,6 +18,13 @@ class CreateTweetView extends ConsumerStatefulWidget {
 }
 
 class _CreateTweetViewState extends ConsumerState<CreateTweetView> {
+  final tweetController = TextEditingController();
+  @override
+  void dispose() {
+    super.dispose();
+    tweetController.clear();
+  }
+
   @override
   Widget build(BuildContext context) {
     final currentUser = ref.watch(currentUserDetailsProvider).value;
@@ -23,7 +32,9 @@ class _CreateTweetViewState extends ConsumerState<CreateTweetView> {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          onPressed: () {},
+          onPressed: () {
+            Navigator.pop(context);
+          },
           icon: const Icon(Icons.close, size: 32),
         ),
         actions: [
@@ -44,8 +55,25 @@ class _CreateTweetViewState extends ConsumerState<CreateTweetView> {
                     Row(
                       children: [
                         CircleAvatar(
-                          backgroundImage: NetworkImage(
-                            currentUser.profilePicture,
+                          backgroundImage: currentUser.profilePicture == null
+                              ? null
+                              : NetworkImage(currentUser.profilePicture!),
+                          radius: 32,
+                        ),
+                        const SizedBox(height: 16),
+                        Expanded(
+                          child: TextField(
+                            controller: tweetController,
+                            style: const TextStyle(fontSize: 22),
+                            decoration: InputDecoration(
+                              hintText: "What's happening",
+                              hintStyle: TextStyle(
+                                color: Pallete.whiteColor,
+                                fontSize: 22,
+                              ),
+                              border: InputBorder.none,
+                            ),
+                            maxLines: null,
                           ),
                         ),
                       ],
@@ -54,6 +82,28 @@ class _CreateTweetViewState extends ConsumerState<CreateTweetView> {
                 ),
               ),
             ),
+      bottomNavigationBar: Container(
+        padding: EdgeInsets.only(bottom: 12),
+        decoration: BoxDecoration(
+          border: Border(top: BorderSide(color: Pallete.greyColor, width: 0.5)),
+        ),
+        child: Row(
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+              child: SvgPicture.asset(AssetsConstants.galleryIcon),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+              child: SvgPicture.asset(AssetsConstants.gifIcon),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+              child: SvgPicture.asset(AssetsConstants.emojiIcon),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
