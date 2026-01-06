@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
@@ -5,6 +8,7 @@ import 'package:twitterclone/Theme/theme.dart';
 import 'package:twitterclone/apis/user_api.dart';
 import 'package:twitterclone/common/rounded_small_button.dart';
 import 'package:twitterclone/constants/assets_constaant.dart';
+import 'package:twitterclone/core/utils.dart';
 import 'package:twitterclone/features/auth/controller/auth_controller.dart';
 
 class CreateTweetView extends ConsumerStatefulWidget {
@@ -19,10 +23,17 @@ class CreateTweetView extends ConsumerStatefulWidget {
 
 class _CreateTweetViewState extends ConsumerState<CreateTweetView> {
   final tweetController = TextEditingController();
+  List<File> images = [];
+
   @override
   void dispose() {
     super.dispose();
     tweetController.clear();
+  }
+
+  void onPickImages() async {
+    images = await pickImages();
+    setState(() {});
   }
 
   @override
@@ -78,6 +89,20 @@ class _CreateTweetViewState extends ConsumerState<CreateTweetView> {
                         ),
                       ],
                     ),
+                    if (images.isNotEmpty)
+                      CarouselSlider(
+                        items: images.map((e) {
+                          return Container(
+                            width: MediaQuery.of(context).size.width,
+                            margin: const EdgeInsets.symmetric(horizontal: 4),
+                            child: Image.file(e),
+                          );
+                        }).toList(),
+                        options: CarouselOptions(
+                          height: 400,
+                          enableInfiniteScroll: false,
+                        ),
+                      ),
                   ],
                 ),
               ),
@@ -91,7 +116,10 @@ class _CreateTweetViewState extends ConsumerState<CreateTweetView> {
           children: [
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-              child: SvgPicture.asset(AssetsConstants.galleryIcon),
+              child: GestureDetector(
+                onTap: onPickImages,
+                child: SvgPicture.asset(AssetsConstants.galleryIcon),
+              ),
             ),
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
