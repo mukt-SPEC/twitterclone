@@ -1,10 +1,17 @@
 import 'package:appwrite/appwrite.dart';
 import 'package:appwrite/models.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import 'package:twitterclone/constants/appwrite_constant.dart';
 import 'package:twitterclone/core/core.dart';
 import 'package:twitterclone/core/enums.dart';
+import 'package:twitterclone/core/provider.dart';
 import 'package:twitterclone/core/result.dart';
 import 'package:twitterclone/model/tweet_model.dart';
+
+final tweetAPIProvider = Provider((ref) {
+  return TweetApi(db: ref.watch(Dependency.tablesDb));
+});
 
 abstract class InterfaceTweetApi {
   // Future<void> uploadTweet({
@@ -16,17 +23,22 @@ abstract class InterfaceTweetApi {
   //   List<String>? hashTags,
   // });
 
-  FutureResult<TablesDB> shareTweet({Tweet tweet});
+  FutureResult<Row> shareTweet({Tweet tweet});
 }
 
 class TweetApi implements InterfaceTweetApi {
-  final Databases _db;
-  TweetApi({required Databases db}) : _db = db;
+  final TablesDB _db;
+  TweetApi({required TablesDB db}) : _db = db;
   @override
-  FutureResult<Document> shareTweet({Tweet? tweet}) async {
+  FutureResult<Row> shareTweet({Tweet? tweet}) async {
     try {
-   
-      return Success(_db);
+      final document = await _db.createRow(
+        databaseId: AppwriteEnvironment.databaseId,
+        tableId: AppwriteEnvironment.tweetCollection,
+        rowId: ID.unique(),
+        data: tweet!.toMap(),
+      );
+      return Success(document);
     } on AppwriteException catch (e, stackTrace) {
       return Error(
         Failure(e.message ?? 'Some unexpected error occured', stackTrace),

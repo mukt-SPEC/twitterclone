@@ -3,15 +3,26 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:riverpod/riverpod.dart';
+import 'package:twitterclone/apis/tweet_api.dart';
 import 'package:twitterclone/core/enums.dart';
+import 'package:twitterclone/core/result.dart';
 import 'package:twitterclone/core/utils.dart';
 import 'package:twitterclone/model/tweet_model.dart';
 
 import '../../auth/controller/auth_controller.dart';
 
+final tweetControllerProvider =
+    StateNotifierProvider.autoDispose<TweetController, bool>((ref) {
+      return TweetController(ref: ref, tweetApi: ref.watch(tweetAPIProvider));
+    });
+
 class TweetController extends StateNotifier<bool> {
+  final TweetApi _tweetApi;
   final Ref _ref;
-  TweetController({required Ref ref}) : _ref = ref, super(false);
+  TweetController({required Ref ref, required TweetApi tweetApi})
+    : _ref = ref,
+      _tweetApi = tweetApi,
+      super(false);
 
   void shareTweet({
     required List<File>? images,
@@ -37,7 +48,7 @@ class TweetController extends StateNotifier<bool> {
   void _shareTextOnlyTweet({
     required String text,
     required BuildContext context,
-  }) {
+  }) async {
     final user = _ref.read(currentUserDetailsProvider).value;
     state = true;
     final link = _getLinkFromText(text);
@@ -55,6 +66,13 @@ class TweetController extends StateNotifier<bool> {
       id: '',
       reshareCount: 0,
     );
+    final response = await _tweetApi.shareTweet(tweet: tweet);
+    switch (response) {
+      case Success():
+        null;
+      case Error(failure: final failure):
+        showSnackBar(context, failure.message!);
+    }
   }
 
   String _getLinkFromText(String text) {

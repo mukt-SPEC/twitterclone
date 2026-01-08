@@ -6,4 +6,5 @@ class AppwriteEnvironment {
 
   static const String databaseId = '69455e8700393822a252';
   static const String tableId = 'user_table';
+  static const String tweetCollection = 'tweet_collection';
 }
