@@ -7,7 +7,7 @@ import 'package:twitterclone/core/enums.dart';
 
 @immutable
 class Tweet {
-  final String text;
+  final String content;
   final List<String> hashTags;
   final String link;
   final List<String> images;
@@ -19,7 +19,7 @@ class Tweet {
   final String id;
   final int reshareCount;
   const Tweet({
-    required this.text,
+    required this.content,
     required this.hashTags,
     required this.link,
     required this.images,
@@ -33,7 +33,7 @@ class Tweet {
   });
 
   Tweet copyWith({
-    String? text,
+    String? content,
     List<String>? hashTags,
     String? link,
     List<String>? images,
@@ -46,7 +46,7 @@ class Tweet {
     int? reshareCount,
   }) {
     return Tweet(
-      text: text ?? this.text,
+      content: content ?? this.content,
       hashTags: hashTags ?? this.hashTags,
       link: link ?? this.link,
       images: images ?? this.images,
@@ -62,7 +62,7 @@ class Tweet {
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
-      'text': text,
+      'content': content,
       'hashTags': hashTags,
       'link': link,
       'images': images,
@@ -78,7 +78,7 @@ class Tweet {
 
   factory Tweet.fromMap(Map<String, dynamic> map) {
     return Tweet(
-      text: map['text'] as String? ?? '',
+      content: map['content'] as String? ?? '',
       hashTags: map['hashTags'] != null
           ? List<String>.from(map['hashTags'] as List)
           : <String>[],
@@ -117,14 +117,14 @@ class Tweet {
 
   @override
   String toString() {
-    return 'Tweet(text: $text, hashTags: $hashTags, link: $link, images: $images, uid: $uid, tweetType: $tweetType, tweetedAt: $tweetedAt, likes: $likes, commentId: $commentId, id: $id, reshareCount: $reshareCount)';
+    return 'Tweet(content: $content, hashTags: $hashTags, link: $link, images: $images, uid: $uid, tweetType: $tweetType, tweetedAt: $tweetedAt, likes: $likes, commentId: $commentId, id: $id, reshareCount: $reshareCount)';
   }
 
   @override
   bool operator ==(covariant Tweet other) {
     if (identical(this, other)) return true;
 
-    return other.text == text &&
+    return other.content == content &&
         listEquals(other.hashTags, hashTags) &&
         other.link == link &&
         listEquals(other.images, images) &&
@@ -139,7 +139,7 @@ class Tweet {
 
   @override
   int get hashCode {
-    return text.hashCode ^
+    return content.hashCode ^
         hashTags.hashCode ^
         link.hashCode ^
         images.hashCode ^

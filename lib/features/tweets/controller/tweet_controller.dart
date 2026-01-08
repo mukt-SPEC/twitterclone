@@ -54,7 +54,7 @@ class TweetController extends StateNotifier<bool> {
     final link = _getLinkFromText(text);
     final hashTags = _getHashTagFromText(text);
     Tweet tweet = Tweet(
-      text: text,
+      content: text,
       hashTags: hashTags,
       link: link,
       images: [],
@@ -67,6 +67,7 @@ class TweetController extends StateNotifier<bool> {
       reshareCount: 0,
     );
     final response = await _tweetApi.shareTweet(tweet: tweet);
+    state = false;
     switch (response) {
       case Success():
         null;
