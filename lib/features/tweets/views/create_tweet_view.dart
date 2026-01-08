@@ -6,10 +6,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:twitterclone/Theme/theme.dart';
 import 'package:twitterclone/apis/user_api.dart';
+import 'package:twitterclone/common/common.dart';
 import 'package:twitterclone/common/rounded_small_button.dart';
 import 'package:twitterclone/constants/assets_constaant.dart';
 import 'package:twitterclone/core/utils.dart';
 import 'package:twitterclone/features/auth/controller/auth_controller.dart';
+import 'package:twitterclone/features/tweets/controller/tweet_controller.dart';
 
 class CreateTweetView extends ConsumerStatefulWidget {
   static route() =>
@@ -31,6 +33,16 @@ class _CreateTweetViewState extends ConsumerState<CreateTweetView> {
     tweetController.clear();
   }
 
+  void shareTweet({required BuildContext context}) {
+    ref
+        .read(tweetControllerProvider.notifier)
+        .shareTweet(
+          images: images,
+          text: tweetController.text,
+          context: context,
+        );
+  }
+
   void onPickImages() async {
     images = await pickImages();
     setState(() {});
@@ -39,6 +51,7 @@ class _CreateTweetViewState extends ConsumerState<CreateTweetView> {
   @override
   Widget build(BuildContext context) {
     final currentUser = ref.watch(currentUserDetailsProvider).value;
+    final isLoading = ref.watch(tweetControllerProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -50,15 +63,15 @@ class _CreateTweetViewState extends ConsumerState<CreateTweetView> {
         ),
         actions: [
           RoundedSmallButton(
-            onTap: () {},
+            onTap: () =>  shareTweet(context: context),
             buttonText: 'Tweet',
             buttonColor: Pallete.blueColor,
             textColor: Pallete.whiteColor,
           ),
         ],
       ),
-      body: currentUser == null
-          ? CircleAvatar()
+      body: isLoading || currentUser == null
+          ? const Loader()
           : SafeArea(
               child: SingleChildScrollView(
                 child: Column(
