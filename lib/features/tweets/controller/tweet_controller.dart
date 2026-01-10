@@ -44,13 +44,39 @@ class TweetController extends StateNotifier<bool> {
     required List<File>? images,
     required String text,
     required BuildContext context,
-  }) {}
+  }) async { state = true;
+    final user = _ref.read(currentUserDetailsProvider).value;
+    
+    final link = _getLinkFromText(text);
+    final hashTags = _getHashTagFromText(text);
+    Tweet tweet = Tweet(
+      content: text,
+      hashTags: hashTags,
+      link: link,
+      images: [],
+      uid: user!.uId,
+      tweetType: TweetType.image,
+      tweetedAt: DateTime.now(),
+      likes: [],
+      commentId: [],
+      id: '',
+      reshareCount: 0,
+    );
+    final response = await _tweetApi.shareTweet(tweet: tweet);
+    state = false;
+    switch (response) {
+      case Success():
+        null;
+      case Error(failure: final failure):
+        showSnackBar(context, failure.message!);
+    }}
   void _shareTextOnlyTweet({
     required String text,
     required BuildContext context,
   }) async {
-    final user = _ref.read(currentUserDetailsProvider).value;
     state = true;
+    final user = _ref.read(currentUserDetailsProvider).value;
+    
     final link = _getLinkFromText(text);
     final hashTags = _getHashTagFromText(text);
     Tweet tweet = Tweet(
