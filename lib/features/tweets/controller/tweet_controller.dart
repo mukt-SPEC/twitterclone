@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:riverpod/riverpod.dart';
+import 'package:twitterclone/apis/storage_api.dart';
 import 'package:twitterclone/apis/tweet_api.dart';
 import 'package:twitterclone/core/enums.dart';
 import 'package:twitterclone/core/result.dart';
@@ -13,16 +14,25 @@ import '../../auth/controller/auth_controller.dart';
 
 final tweetControllerProvider =
     StateNotifierProvider.autoDispose<TweetController, bool>((ref) {
-      return TweetController(ref: ref, tweetApi: ref.watch(tweetAPIProvider));
+      return TweetController(
+        ref: ref,
+        tweetApi: ref.watch(tweetAPIProvider),
+        storageApi: ref.watch(storageAPIProvider),
+      );
     });
 
 class TweetController extends StateNotifier<bool> {
   final TweetApi _tweetApi;
+  final StorageApi _storageApi;
   final Ref _ref;
-  TweetController({required Ref ref, required TweetApi tweetApi})
-    : _ref = ref,
-      _tweetApi = tweetApi,
-      super(false);
+  TweetController({
+    required Ref ref,
+    required TweetApi tweetApi,
+    required StorageApi storageApi,
+  }) : _ref = ref,
+       _storageApi = storageApi,
+       _tweetApi = tweetApi,
+       super(false);
 
   void shareTweet({
     required List<File>? images,
@@ -44,16 +54,18 @@ class TweetController extends StateNotifier<bool> {
     required List<File>? images,
     required String text,
     required BuildContext context,
-  }) async { state = true;
+  }) async {
+    state = true;
     final user = _ref.read(currentUserDetailsProvider).value;
-    
+
     final link = _getLinkFromText(text);
+    final imageLinks = await _storageApi.uploadImages(images!);
     final hashTags = _getHashTagFromText(text);
     Tweet tweet = Tweet(
       content: text,
       hashTags: hashTags,
       link: link,
-      images: [],
+      images: imageLinks,
       uid: user!.uId,
       tweetType: TweetType.image,
       tweetedAt: DateTime.now(),
@@ -69,14 +81,16 @@ class TweetController extends StateNotifier<bool> {
         null;
       case Error(failure: final failure):
         showSnackBar(context, failure.message!);
-    }}
+    }
+  }
+
   void _shareTextOnlyTweet({
     required String text,
     required BuildContext context,
   }) async {
     state = true;
     final user = _ref.read(currentUserDetailsProvider).value;
-    
+
     final link = _getLinkFromText(text);
     final hashTags = _getHashTagFromText(text);
     Tweet tweet = Tweet(
