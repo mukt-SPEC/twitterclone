@@ -22,6 +22,7 @@ abstract class InterfaceTweetApi {
   //   String? link,
   //   List<String>? hashTags,
   // });
+  Future<List<Row>> getTweet();
 
   FutureResult<Row> shareTweet({Tweet tweet});
 }
@@ -46,5 +47,14 @@ class TweetApi implements InterfaceTweetApi {
     } catch (e, stackTrace) {
       return Error(Failure(e.toString(), stackTrace));
     }
+  }
+
+  @override
+  Future<List<Row>> getTweet() async {
+    final doc = await _db.listRows(
+      databaseId: AppwriteEnvironment.databaseId,
+      tableId: AppwriteEnvironment.tweetCollection,
+    );
+    return doc.rows;
   }
 }
