@@ -1,3 +1,4 @@
+import 'package:any_link_preview/any_link_preview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:twitterclone/common/common.dart';
@@ -50,7 +51,10 @@ class TweetCard extends ConsumerWidget {
                 HashtagteText(text: tweet.content),
                 if (tweet.tweetType == TweetType.image)
                   CarouselImage(imageLinks: tweet.images),
-                if (tweet.link.isNotEmpty) ...[const SizedBox(height: 4)],
+                if (tweet.link.isNotEmpty) ...[
+                  const SizedBox(height: 4),
+                  AnyLinkPreview(link: 'https//${tweet.link}'),
+                ],
               ],
             );
           },
