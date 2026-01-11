@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:twitterclone/common/common.dart';
+import 'package:twitterclone/core/enums.dart';
 import 'package:twitterclone/features/auth/controller/auth_controller.dart';
 import 'package:timeago/timeago.dart' as timeago;
+import 'package:twitterclone/features/tweets/widget/carousel_image.dart';
 import 'package:twitterclone/features/tweets/widget/hashtags.dart';
 import 'package:twitterclone/model/tweet_model.dart';
 
@@ -19,6 +21,7 @@ class TweetCard extends ConsumerWidget {
             return Column(
               children: [
                 Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Container(
                       margin: const EdgeInsets.symmetric(horizontal: 16),
@@ -45,6 +48,9 @@ class TweetCard extends ConsumerWidget {
                   ],
                 ),
                 HashtagteText(text: tweet.content),
+                if (tweet.tweetType == TweetType.image)
+                  CarouselImage(imageLinks: tweet.images),
+                if (tweet.link.isNotEmpty) ...[const SizedBox(height: 4)],
               ],
             );
           },
