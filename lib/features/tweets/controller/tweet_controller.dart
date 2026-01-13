@@ -26,6 +26,11 @@ final getTweetProvider = FutureProvider.autoDispose((ref) async {
   return tweetController.getTweet();
 });
 
+final getLatestTweetProvider = StreamProvider.autoDispose((ref) {
+  final tweetApi = ref.watch(tweetAPIProvider);
+  return tweetApi.getLatestTweet();
+});
+
 class TweetController extends StateNotifier<bool> {
   final TweetApi _tweetApi;
   final StorageApi _storageApi;

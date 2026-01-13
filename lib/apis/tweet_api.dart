@@ -10,26 +10,24 @@ import 'package:twitterclone/core/result.dart';
 import 'package:twitterclone/model/tweet_model.dart';
 
 final tweetAPIProvider = Provider((ref) {
-  return TweetApi(db: ref.watch(Dependency.tablesDb));
+  return TweetApi(
+    db: ref.watch(Dependency.tablesDb),
+    realTime: ref.watch(Dependency.realtime),
+  );
 });
 
 abstract class InterfaceTweetApi {
-  // Future<void> uploadTweet({
-  //   required String text,
-  //   required String uid,
-  //   required List<String> images,
-  //   required TweetType tweetType,
-  //   String? link,
-  //   List<String>? hashTags,
-  // });
   Future<List<Row>> getTweet();
-
+  Stream<RealtimeMessage> getLatestTweet();
   FutureResult<Row> shareTweet({Tweet tweet});
 }
 
 class TweetApi implements InterfaceTweetApi {
+  final Realtime _realtime;
   final TablesDB _db;
-  TweetApi({required TablesDB db}) : _db = db;
+  TweetApi({required TablesDB db, required Realtime realTime})
+    : _db = db,
+      _realtime = realTime;
   @override
   FutureResult<Row> shareTweet({Tweet? tweet}) async {
     try {
@@ -56,5 +54,12 @@ class TweetApi implements InterfaceTweetApi {
       tableId: AppwriteEnvironment.tweetCollection,
     );
     return doc.rows;
+  }
+
+  @override
+  Stream<RealtimeMessage> getLatestTweet() {
+    return _realtime.subscribe([
+      'databases.${AppwriteEnvironment.databaseId}.collections.${AppwriteEnvironment.tweetCollection}.documents',
+    ]).stream;
   }
 }
