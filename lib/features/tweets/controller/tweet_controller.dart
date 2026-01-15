@@ -9,6 +9,7 @@ import 'package:twitterclone/core/enums.dart';
 import 'package:twitterclone/core/result.dart';
 import 'package:twitterclone/core/utils.dart';
 import 'package:twitterclone/model/tweet_model.dart';
+import 'package:twitterclone/model/user_model.dart';
 
 import '../../auth/controller/auth_controller.dart';
 
@@ -63,6 +64,20 @@ class TweetController extends StateNotifier<bool> {
     } else {
       _shareTextOnlyTweet(text: text, context: context);
     }
+  }
+
+  void likeTweet({Tweet? tweet, UserModel? user}) async {
+    List<String> likes = tweet!.likes;
+
+    if (tweet.likes.contains(user!.uId)) {
+      likes.remove(user.uId);
+    } else {
+      likes.add(user.uId);
+    }
+
+    tweet = tweet.copyWith(likes: likes);
+
+    final res = await _tweetApi.likeTweet(tweet: tweet);
   }
 
   void _shareImageTweet({

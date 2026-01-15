@@ -41,6 +41,7 @@ class _CreateTweetViewState extends ConsumerState<CreateTweetView> {
           text: tweetController.text,
           context: context,
         );
+    Navigator.pop(context);
   }
 
   void onPickImages() async {
@@ -63,7 +64,7 @@ class _CreateTweetViewState extends ConsumerState<CreateTweetView> {
         ),
         actions: [
           RoundedSmallButton(
-            onTap: () =>  shareTweet(context: context),
+            onTap: () => shareTweet(context: context),
             buttonText: 'Tweet',
             buttonColor: Pallete.blueColor,
             textColor: Pallete.whiteColor,

@@ -20,6 +20,7 @@ abstract class InterfaceTweetApi {
   Future<List<Row>> getTweet();
   Stream<RealtimeMessage> getLatestTweet();
   FutureResult<Row> shareTweet({Tweet tweet});
+  FutureResult<Row> likeTweet({Tweet tweet});
 }
 
 class TweetApi implements InterfaceTweetApi {
@@ -52,6 +53,7 @@ class TweetApi implements InterfaceTweetApi {
     final doc = await _db.listRows(
       databaseId: AppwriteEnvironment.databaseId,
       tableId: AppwriteEnvironment.tweetCollection,
+      queries: [Query.orderDesc('tweetedAt')],
     );
     return doc.rows;
   }
@@ -61,5 +63,24 @@ class TweetApi implements InterfaceTweetApi {
     return _realtime.subscribe([
       'databases.${AppwriteEnvironment.databaseId}.collections.${AppwriteEnvironment.tweetCollection}.documents',
     ]).stream;
+  }
+
+  @override
+  FutureResult<Row> likeTweet({Tweet? tweet}) async {
+    try {
+      final document = await _db.updateRow(
+        databaseId: AppwriteEnvironment.databaseId,
+        tableId: AppwriteEnvironment.tweetCollection,
+        rowId: tweet!.id,
+        data: {'likes': tweet.likes},
+      );
+      return Success(document);
+    } on AppwriteException catch (e, stackTrace) {
+      return Error(
+        Failure(e.message ?? 'Some unexpected error occured', stackTrace),
+      );
+    } catch (e, stackTrace) {
+      return Error(Failure(e.toString(), stackTrace));
+    }
   }
 }
