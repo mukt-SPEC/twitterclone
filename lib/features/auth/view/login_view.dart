@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:twitterclone/Theme/theme.dart';
 import 'package:twitterclone/common/common.dart';
-import 'package:twitterclone/common/rounded_small_button.dart';
 import 'package:twitterclone/constants/ui_constants.dart';
 import 'package:twitterclone/features/auth/controller/auth_controller.dart';
 import 'package:twitterclone/features/auth/view/sign_up_view.dart';
