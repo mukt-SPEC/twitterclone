@@ -20,6 +20,7 @@ abstract class InterfaceTweetApi {
   Stream<RealtimeMessage> getLatestTweet();
   FutureResult<Row> shareTweet({Tweet tweet});
   FutureResult<Row> likeTweet({Tweet tweet});
+   FutureResult<Row> updaateResharecount({Tweet tweet});
 }
 
 class TweetApi implements InterfaceTweetApi {
@@ -72,6 +73,25 @@ class TweetApi implements InterfaceTweetApi {
         tableId: AppwriteEnvironment.tweetCollection,
         rowId: tweet!.id,
         data: {'likes': tweet.likes},
+      );
+      return Success(document);
+    } on AppwriteException catch (e, stackTrace) {
+      return Error(
+        Failure(e.message ?? 'Some unexpected error occured', stackTrace),
+      );
+    } catch (e, stackTrace) {
+      return Error(Failure(e.toString(), stackTrace));
+    }
+  }
+  
+  @override
+  FutureResult<Row> updaateResharecount({Tweet? tweet}) async{
+    try {
+      final document = await _db.updateRow(
+        databaseId: AppwriteEnvironment.databaseId,
+        tableId: AppwriteEnvironment.tweetCollection,
+        rowId: tweet!.id,
+        data: {'reshareCount': tweet.reshareCount},
       );
       return Success(document);
     } on AppwriteException catch (e, stackTrace) {

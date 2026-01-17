@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:appwrite/appwrite.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:riverpod/riverpod.dart';
@@ -78,6 +79,34 @@ class TweetController extends StateNotifier<bool> {
     tweet = tweet.copyWith(likes: likes);
 
     final res = await _tweetApi.likeTweet(tweet: tweet);
+    switch (res) {
+      case Success():
+        null;
+      case Error(failure: final failure):
+        null;
+    }
+  }
+
+  void reshareTweet({
+    Tweet? tweet,
+    UserModel? user,
+    required BuildContext context,
+  }) async {
+    tweet = tweet!.copyWith(
+      retweetedBy: user!.name,
+      likes: [],
+      commentId: [],
+      reshareCount: tweet.reshareCount + 1,
+    );
+    final res = await _tweetApi.updaateResharecount(tweet: tweet);
+    switch (res) {
+      case Success():
+        tweet.copyWith(id: ID.unique(), reshareCount: 0);
+        final secondResponse = await _tweetApi.shareTweet(tweet: tweet);
+        
+      case Error(failure: final failure):
+        showSnackBar(context, failure.message!);
+    }
   }
 
   void _shareImageTweet({
@@ -103,6 +132,7 @@ class TweetController extends StateNotifier<bool> {
       commentId: [],
       id: '',
       reshareCount: 0,
+      retweetedBy: '',
     );
     final response = await _tweetApi.shareTweet(tweet: tweet);
     state = false;
@@ -135,6 +165,7 @@ class TweetController extends StateNotifier<bool> {
       commentId: [],
       id: '',
       reshareCount: 0,
+      retweetedBy: '',
     );
     final response = await _tweetApi.shareTweet(tweet: tweet);
     state = false;
