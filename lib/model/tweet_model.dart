@@ -19,6 +19,7 @@ class Tweet {
   final String id;
   final int reshareCount;
   final String retweetedBy;
+  final String repliedTo;
   const Tweet({
     required this.content,
     required this.hashTags,
@@ -32,6 +33,7 @@ class Tweet {
     required this.id,
     required this.reshareCount,
     required this.retweetedBy,
+    required this.repliedTo,
   });
 
   Tweet copyWith({
@@ -47,6 +49,7 @@ class Tweet {
     String? id,
     int? reshareCount,
     String? retweetedBy,
+    String? repliedTo,
   }) {
     return Tweet(
       content: content ?? this.content,
@@ -61,6 +64,7 @@ class Tweet {
       id: id ?? this.id,
       reshareCount: reshareCount ?? this.reshareCount,
       retweetedBy: retweetedBy ?? this.retweetedBy,
+      repliedTo: repliedTo ?? this.repliedTo,
     );
   }
 
@@ -112,6 +116,7 @@ class Tweet {
           ? map['reshareCount'] as int
           : int.tryParse((map['reshareCount'] ?? 0).toString()) ?? 0,
       retweetedBy: map['retweetedBy'] as String? ?? '',
+      repliedTo: map['repliedTo'] as String? ?? '',
     );
   }
 
@@ -122,7 +127,7 @@ class Tweet {
 
   @override
   String toString() {
-    return 'Tweet(content: $content, hashTags: $hashTags, link: $link, images: $images, uid: $uid, tweetType: $tweetType, tweetedAt: $tweetedAt, likes: $likes, commentId: $commentId, id: $id, reshareCount: $reshareCount, retweetedBy: $retweetedBy)';
+    return 'Tweet(content: $content, hashTags: $hashTags, link: $link, images: $images, uid: $uid, tweetType: $tweetType, tweetedAt: $tweetedAt, likes: $likes, commentId: $commentId, id: $id, reshareCount: $reshareCount, retweetedBy: $retweetedBy, repliedTo: $repliedTo)';
   }
 
   @override
@@ -140,7 +145,8 @@ class Tweet {
         listEquals(other.commentId, commentId) &&
         other.id == id &&
         other.reshareCount == reshareCount &&
-        other.retweetedBy == retweetedBy;
+        other.retweetedBy == retweetedBy &&
+        other.repliedTo == repliedTo;
   }
 
   @override
@@ -156,6 +162,7 @@ class Tweet {
         commentId.hashCode ^
         id.hashCode ^
         reshareCount.hashCode ^
-        retweetedBy.hashCode;
+        retweetedBy.hashCode ^
+        repliedTo.hashCode;
   }
 }

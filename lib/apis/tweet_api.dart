@@ -20,7 +20,8 @@ abstract class InterfaceTweetApi {
   Stream<RealtimeMessage> getLatestTweet();
   FutureResult<Row> shareTweet({Tweet tweet});
   FutureResult<Row> likeTweet({Tweet tweet});
-   FutureResult<Row> updaateResharecount({Tweet tweet});
+  FutureResult<Row> updaateResharecount({Tweet tweet});
+  Future<List<Row>> getTweetReplies({Tweet tweet});
 }
 
 class TweetApi implements InterfaceTweetApi {
@@ -83,9 +84,9 @@ class TweetApi implements InterfaceTweetApi {
       return Error(Failure(e.toString(), stackTrace));
     }
   }
-  
+
   @override
-  FutureResult<Row> updaateResharecount({Tweet? tweet}) async{
+  FutureResult<Row> updaateResharecount({Tweet? tweet}) async {
     try {
       final document = await _db.updateRow(
         databaseId: AppwriteEnvironment.databaseId,
@@ -101,5 +102,15 @@ class TweetApi implements InterfaceTweetApi {
     } catch (e, stackTrace) {
       return Error(Failure(e.toString(), stackTrace));
     }
+  }
+
+  @override
+  Future<List<Row>> getTweetReplies({Tweet? tweet}) async {
+    final doc = await _db.listRows(
+      databaseId: AppwriteEnvironment.databaseId,
+      tableId: AppwriteEnvironment.tweetCollection,
+      queries: [Query.equal('repliedTo', tweet!.id)],
+    );
+    return doc.rows;
   }
 }
