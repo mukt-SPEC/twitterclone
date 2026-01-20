@@ -38,6 +38,11 @@ final getLatestTweetProvider = StreamProvider.autoDispose((ref) {
   return tweetApi.getLatestTweet();
 });
 
+final getTweetByIdProvider = FutureProvider.family((ref, String id) async {
+    final tweetController = ref.watch(tweetControllerProvider.notifier);
+  return tweetController.getTweetById(id);
+});
+
 class TweetController extends StateNotifier<bool> {
   final TweetApi _tweetApi;
   final StorageApi _storageApi;
@@ -54,6 +59,11 @@ class TweetController extends StateNotifier<bool> {
   Future<List<Tweet>> getTweet() async {
     final tweetList = await _tweetApi.getTweet();
     return tweetList.map((tweet) => Tweet.fromMap(tweet.data)).toList();
+  }
+
+  Future<Tweet> getTweetById(String id) async {
+    final tweet = await _tweetApi.getTweetById(id: id);
+    return Tweet.fromMap(tweet.data);
   }
 
   void shareTweet({

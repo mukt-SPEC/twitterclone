@@ -76,6 +76,38 @@ class TweetCard extends ConsumerWidget {
                             ),
                           ],
                         ),
+                        if (tweet.repliedTo.isNotEmpty)
+                          ref
+                              .watch(getTweetByIdProvider(tweet.repliedTo))
+                              .when(
+                                data: (repliedToTweet) {
+                                  final replyingToUser = ref
+                                      .watch(
+                                        userDetailsProvider(repliedToTweet.uid),
+                                      )
+                                      .value;
+                                  return RichText(
+                                    text: TextSpan(
+                                      text: 'replying',
+                                      style: const TextStyle(
+                                        color: Pallete.greyColor,
+                                      ),
+                                      children: [
+                                        TextSpan(
+                                          text: ' @${replyingToUser?.name}',
+                                          style: TextStyle(
+                                            color: Pallete.blueColor,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                },
+                                error: (error, stacktrace) =>
+                                    ErrorText(errorText: error.toString()),
+                                loading: () => Loader(),
+                              ),
+
                         HashtagteText(text: tweet.content),
                         if (tweet.tweetType == TweetType.image)
                           CarouselImage(imageLinks: tweet.images),
