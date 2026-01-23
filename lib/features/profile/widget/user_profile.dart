@@ -6,6 +6,11 @@ class UserProfile extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return Container();
+    return NestedScrollView(
+      headerSliverBuilder: (context, innerBoxIsScrolled) {
+        return [SliverAppBar(expandedHeight: 150)];
+      },
+      body: body,
+    );
   }
 }
