@@ -11,6 +11,7 @@ abstract class InterfaceUserAPI {
   FutureEitherVoid saveUserData(UserModel user);
   Future<Row> getUserData(String uId);
   Future<List<Row>> searchUserByName(String name);
+  FutureEitherVoid updateUserData(UserModel userModel);
 }
 
 final userAPIProvider = Provider<UserAPI>((ref) {
@@ -59,5 +60,25 @@ class UserAPI extends InterfaceUserAPI {
       queries: [Query.search('name', name)],
     );
     return doc.rows;
+  }
+
+  @override
+  FutureEitherVoid updateUserData(UserModel userModel) async {
+    try {
+      await _db.updateRow(
+        databaseId: AppwriteEnvironment.databaseId,
+        tableId: AppwriteEnvironment.tableId,
+        rowId: userModel.uId,
+        data: userModel.toMap(),
+      );
+
+      return const Success(null);
+    } on AppwriteException catch (e, stackTrace) {
+      return Error(
+        Failure(e.message ?? 'Some unexpected error occured', stackTrace),
+      );
+    } catch (e, stackTrace) {
+      return Error(Failure(e.toString(), stackTrace));
+    }
   }
 }

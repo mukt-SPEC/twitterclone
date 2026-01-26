@@ -6,6 +6,7 @@ import 'package:twitterclone/common/loading_page.dart';
 import 'package:twitterclone/constants/constants.dart';
 import 'package:twitterclone/features/auth/controller/auth_controller.dart';
 import 'package:twitterclone/features/profile/controller/user_profile_controller.dart';
+import 'package:twitterclone/features/profile/view/edit_profile_view.dart';
 import 'package:twitterclone/features/profile/widget/follow_count.dart';
 import 'package:twitterclone/features/tweets/controller/tweet_controller.dart';
 import 'package:twitterclone/features/tweets/widget/tweet_card.dart';
@@ -47,7 +48,11 @@ class UserProfile extends ConsumerWidget {
                         alignment: Alignment.bottomRight,
                         margin: EdgeInsets.all(12),
                         child: OutlinedButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            if (currentUser.uId == userModel.uId) {
+                              Navigator.push(context, EditProfileView.route());
+                            }
+                          },
                           style: ElevatedButton.styleFrom(
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(20),
