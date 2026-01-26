@@ -34,7 +34,10 @@ class UserProfile extends ConsumerWidget {
                       Positioned.fill(
                         child: userModel.bannerPicture!.isEmpty
                             ? Container(color: Pallete.blueColor)
-                            : Image.network(userModel.bannerPicture!),
+                            : Image.network(
+                                userModel.bannerPicture!,
+                                fit: BoxFit.fitWidth,
+                              ),
                       ),
                       Positioned(
                         child: CircleAvatar(
