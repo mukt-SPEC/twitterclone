@@ -23,6 +23,7 @@ abstract class InterfaceTweetApi {
   FutureResult<Row> updaateResharecount({Tweet tweet});
   Future<List<Row>> getTweetReplies({Tweet tweet});
   Future<Row> getTweetById({String id});
+  Future<List<Row>> getUserTweets(String uId);
 }
 
 class TweetApi implements InterfaceTweetApi {
@@ -122,5 +123,15 @@ class TweetApi implements InterfaceTweetApi {
       tableId: AppwriteEnvironment.tweetCollection,
       rowId: id!,
     );
+  }
+
+  @override
+  Future<List<Row>> getUserTweets(String uId) async {
+    final doc = await _db.listRows(
+      databaseId: AppwriteEnvironment.databaseId,
+      tableId: AppwriteEnvironment.tweetCollection,
+      queries: [Query.equal('uId', uId)],
+    );
+    return doc.rows;
   }
 }
