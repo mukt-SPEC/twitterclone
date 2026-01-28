@@ -1,6 +1,5 @@
 import 'dart:io';
 
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
@@ -26,6 +25,11 @@ final getUserTweetProvider = FutureProvider.family((ref, String uId) async {
     userProfileControllerProvider.notifier,
   );
   return userProfileController.getUserTweets(uId);
+});
+
+final getLatestUserProfileDataProvider = StreamProvider.autoDispose((ref) {
+  final userAPI = ref.watch(userAPIProvider);
+  return userAPI.getLatestUserProfileData();
 });
 
 class UserProfileController extends StateNotifier<bool> {

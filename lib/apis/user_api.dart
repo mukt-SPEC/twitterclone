@@ -12,16 +12,21 @@ abstract class InterfaceUserAPI {
   Future<Row> getUserData(String uId);
   Future<List<Row>> searchUserByName(String name);
   FutureEitherVoid updateUserData(UserModel userModel);
+  Stream<RealtimeMessage> getLatestUserProfileData();
 }
 
 final userAPIProvider = Provider<UserAPI>((ref) {
   final tableDB = ref.watch(Dependency.tablesDb);
-  return UserAPI(db: tableDB);
+  final realTime = ref.watch(Dependency.realtime);
+  return UserAPI(db: tableDB, realTime: realTime);
 });
 
 class UserAPI extends InterfaceUserAPI {
+  final Realtime _realTime;
   final TablesDB _db;
-  UserAPI({required TablesDB db}) : _db = db;
+  UserAPI({required TablesDB db, required Realtime realTime})
+    : _db = db,
+      _realTime = realTime;
 
   @override
   FutureEitherVoid saveUserData(UserModel user) async {
@@ -80,5 +85,10 @@ class UserAPI extends InterfaceUserAPI {
     } catch (e, stackTrace) {
       return Error(Failure(e.toString(), stackTrace));
     }
+  }
+  
+  @override
+  Stream<RealtimeMessage> getLatestUserProfileData() {
+    return _realTime.subscribe(['databases.${AppwriteEnvironment.databaseId}.collections.${AppwriteEnvironment.tableId}.documents']).stream;
   }
 }

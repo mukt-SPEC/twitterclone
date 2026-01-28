@@ -9,6 +9,7 @@ import 'package:twitterclone/constants/constants.dart';
 import 'package:twitterclone/core/enums.dart';
 import 'package:twitterclone/features/auth/controller/auth_controller.dart';
 import 'package:timeago/timeago.dart' as timeago;
+import 'package:twitterclone/features/profile/view/user_profile_view.dart';
 import 'package:twitterclone/features/tweets/controller/tweet_controller.dart';
 import 'package:twitterclone/features/tweets/views/reply_screen.dart';
 import 'package:twitterclone/features/tweets/widget/carousel_image.dart';
@@ -42,9 +43,17 @@ class TweetCard extends ConsumerWidget {
                               margin: const EdgeInsets.symmetric(
                                 horizontal: 16,
                               ),
-                              child: CircleAvatar(
-                                backgroundImage: NetworkImage(
-                                  user.profilePicture!,
+                              child: GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    UserProfileView.route(user),
+                                  );
+                                },
+                                child: CircleAvatar(
+                                  backgroundImage: NetworkImage(
+                                    user.profilePicture!,
+                                  ),
                                 ),
                               ),
                             ),
