@@ -13,6 +13,8 @@ abstract class InterfaceUserAPI {
   Future<List<Row>> searchUserByName(String name);
   FutureEitherVoid updateUserData(UserModel userModel);
   Stream<RealtimeMessage> getLatestUserProfileData();
+  FutureEitherVoid followUser(UserModel user);
+   FutureEitherVoid followingUser(UserModel user);
 }
 
 final userAPIProvider = Provider<UserAPI>((ref) {
@@ -86,9 +88,51 @@ class UserAPI extends InterfaceUserAPI {
       return Error(Failure(e.toString(), stackTrace));
     }
   }
-  
+
   @override
   Stream<RealtimeMessage> getLatestUserProfileData() {
-    return _realTime.subscribe(['databases.${AppwriteEnvironment.databaseId}.collections.${AppwriteEnvironment.tableId}.documents']).stream;
+    return _realTime.subscribe([
+      'databases.${AppwriteEnvironment.databaseId}.collections.${AppwriteEnvironment.tableId}.documents',
+    ]).stream;
+  }
+
+  @override
+  FutureEitherVoid followUser(UserModel user) async {
+    try {
+      await _db.updateRow(
+        databaseId: AppwriteEnvironment.databaseId,
+        tableId: AppwriteEnvironment.tableId,
+        rowId: user.uId,
+        data: {'followers': user.followers},
+      );
+
+      return const Success(null);
+    } on AppwriteException catch (e, stackTrace) {
+      return Error(
+        Failure(e.message ?? 'Some unexpected error occured', stackTrace),
+      );
+    } catch (e, stackTrace) {
+      return Error(Failure(e.toString(), stackTrace));
+    }
+  }
+  
+  @override
+  FutureEitherVoid followingUser(UserModel user)async {
+        try {
+      await _db.updateRow(
+        databaseId: AppwriteEnvironment.databaseId,
+        tableId: AppwriteEnvironment.tableId,
+        rowId: user.uId,
+        data: {'following': user.following},
+      );
+
+      return const Success(null);
+    } on AppwriteException catch (e, stackTrace) {
+      return Error(
+        Failure(e.message ?? 'Some unexpected error occured', stackTrace),
+      );
+    } catch (e, stackTrace) {
+      return Error(Failure(e.toString(), stackTrace));
+    }
   }
 }

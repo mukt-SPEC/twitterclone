@@ -76,4 +76,23 @@ class UserProfileController extends StateNotifier<bool> {
         showSnackBar(context, failure.message!);
     }
   }
+
+  void followUser({
+    required UserModel user,
+    required BuildContext buildcontext,
+    required UserModel currentUser,
+  }) async {
+    if (currentUser.following.contains(user.uId)) {
+      user.followers.remove(currentUser.uId);
+      currentUser.following.remove(user.uId);
+    }else{
+       user.followers.add(currentUser.uId);
+      currentUser.following.add(user.uId);
+    }
+
+    user = user.copyWith(followers: user.followers);
+    currentUser = currentUser.copyWith(following: currentUser.following,);
+
+    final result = await _userAPI.followUser(user);
+  }
 }
