@@ -79,7 +79,7 @@ class UserProfileController extends StateNotifier<bool> {
 
   void followUser({
     required UserModel user,
-    required BuildContext buildcontext,
+    required BuildContext context,
     required UserModel currentUser,
   }) async {
     if (currentUser.following.contains(user.uId)) {
@@ -94,5 +94,11 @@ class UserProfileController extends StateNotifier<bool> {
     currentUser = currentUser.copyWith(following: currentUser.following,);
 
     final result = await _userAPI.followUser(user);
+    switch (result) {
+      case Success():
+        final res2 = await _userAPI.followingUser(currentUser);
+      case Error(failure: final failure):
+        showSnackBar(context, failure.message!);
+    }
   }
 }
