@@ -7,7 +7,9 @@ class AppwriteEnvironment {
   static const String databaseId = '69455e8700393822a252';
   static const String tableId = 'user_table';
   static const String tweetCollection = 'tweet_collection';
-  static const String imageBucketId ='6962bcb7001eac99e4fd';
+  static const String imageBucketId = '6962bcb7001eac99e4fd';
+  static const String notificationCollection = 'notification_collection';
 
-  static String imageUrl(String imageId) => '$appwritePublicEndpoint/storage/buckets/$imageBucketId/files/$imageId/view/project=$appwriteProjectId&mode=admin';
+  static String imageUrl(String imageId) =>
+      '$appwritePublicEndpoint/storage/buckets/$imageBucketId/files/$imageId/view/project=$appwriteProjectId&mode=admin';
 }

@@ -3,6 +3,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:twitterclone/Theme/theme.dart';
 import 'package:twitterclone/constants/constants.dart';
 import 'package:twitterclone/features/explore/view/explore_view.dart';
+import 'package:twitterclone/features/notifications/views/notification_view.dart';
 import 'package:twitterclone/features/tweets/widget/tweet_list.dart';
 
 class UiConstants {
@@ -18,6 +19,7 @@ class UiConstants {
 
   static List<Widget> bottomTabBarPages = [
     TweetList(),
-    ExploreView()
+    ExploreView(),
+    NotificationView(),
   ];
 }

@@ -4,11 +4,13 @@ import 'package:appwrite/appwrite.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:riverpod/riverpod.dart';
+import 'package:twitterclone/apis/notification_api.dart';
 import 'package:twitterclone/apis/storage_api.dart';
 import 'package:twitterclone/apis/tweet_api.dart';
 import 'package:twitterclone/core/enums.dart';
 import 'package:twitterclone/core/result.dart';
 import 'package:twitterclone/core/utils.dart';
+import 'package:twitterclone/features/notifications/controller/notification_controller.dart';
 import 'package:twitterclone/model/tweet_model.dart';
 import 'package:twitterclone/model/user_model.dart';
 
@@ -20,6 +22,9 @@ final tweetControllerProvider =
         ref: ref,
         tweetApi: ref.watch(tweetAPIProvider),
         storageApi: ref.watch(storageAPIProvider),
+        notificationController: ref.watch(
+          notificationControllerProvider.notifier,
+        ),
       );
     });
 
@@ -39,21 +44,24 @@ final getLatestTweetProvider = StreamProvider.autoDispose((ref) {
 });
 
 final getTweetByIdProvider = FutureProvider.family((ref, String id) async {
-    final tweetController = ref.watch(tweetControllerProvider.notifier);
+  final tweetController = ref.watch(tweetControllerProvider.notifier);
   return tweetController.getTweetById(id);
 });
 
 class TweetController extends StateNotifier<bool> {
   final TweetApi _tweetApi;
   final StorageApi _storageApi;
+  final NotificationController _notificationController;
   final Ref _ref;
   TweetController({
     required Ref ref,
     required TweetApi tweetApi,
     required StorageApi storageApi,
+    required NotificationController notificationController,
   }) : _ref = ref,
        _storageApi = storageApi,
        _tweetApi = tweetApi,
+       _notificationController = notificationController,
        super(false);
 
   Future<List<Tweet>> getTweet() async {
@@ -102,7 +110,13 @@ class TweetController extends StateNotifier<bool> {
     final res = await _tweetApi.likeTweet(tweet: tweet);
     switch (res) {
       case Success():
-        null;
+        // _notificationApi.createNotifcation(notifcation);
+        _notificationController.createNotifcation(
+          text: '${user.name} liked your tweet',
+          postId: tweet.id,
+          notificationType: NotificationType.like,
+          uId: tweet.uid,
+        );
       case Error(failure: final failure):
         null;
     }
